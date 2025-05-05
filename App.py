@@ -19,8 +19,14 @@ class Menu(QWidget):
    #Function to set design of UI for application
    def setUi(self):
        self.layout=QVBoxLayout()
+       self.layout.setObjectName("mylayout")
        self.myList=QListWidget()
+       self.myList.setObjectName("my_list")
+
+
        self.good_list=QListWidget()
+       self.good_list.setObjectName("goodList")
+
        self.lbl=QLabel("Total: Rs.0")
 
       #Display all item that are stored in database
@@ -31,8 +37,10 @@ class Menu(QWidget):
 
        #Making 'Add to cart' button to add food in order list
        btn=QPushButton("Add to cart")
+       btn.setObjectName("mybtn")
        btn.clicked.connect(self.addCart)
        self.layout.addWidget(btn)
+
 
        #Display added item in cart's list
        self.layout.addWidget(QLabel("Cart"))
@@ -41,8 +49,48 @@ class Menu(QWidget):
 
        #Making 'Place Order' button to order food
        order=QPushButton("Order")
+       order.setObjectName("myorder")
        order.clicked.connect(self.orderPlace)
        self.layout.addWidget(order)
+
+       #Styling widget
+       self.setStyleSheet("""
+       QVBoxLayout#mylayout{
+       background-color:#b829e3;
+       }
+              QListWidget#my_list{
+              background-color:#f54955;
+              color:#9ca19d;
+              font-weight:bold;
+              font-size:16px;
+              }
+              
+              QListWidget#goodList{
+       background-color:#5179f0;
+       color:#d2d4c7;
+       }
+       
+        QPushButton#mybtn{
+                     background-color:#066626;
+                     color:#0c0d0d;
+                     }
+                     
+        QPushButton#mybtn:hover{
+                     background-color:#22e369;
+                      color:white;
+                     }
+                     
+                     QPushButton#myorder{
+                     background-color:#f26411;
+                     color:#141414;
+                     }
+                     
+        QPushButton#myorder:hover{
+                     background-color:#f27949;
+                      color:white;
+                     }
+              
+              """)
 
        #Initializing layout
        self.setLayout(self.layout)
@@ -52,7 +100,7 @@ class Menu(QWidget):
        cursor=conn.cursor()
        cursor.execute("SELECT id,name,price FROM menu")
        for data in cursor.fetchall():
-           self.myList.addItem(f"{data[0]}. : {data[1]}:- Rs.{data[2]}")
+           self.myList.addItem(f"{data[0]}. :  {data[1]}...............................Rs.{data[2]}")
            conn.close()
 
    def addCart(self):

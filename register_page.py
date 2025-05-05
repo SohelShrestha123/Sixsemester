@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
 
-class Register(QWidget):
+class RegisterPage(QWidget):
     def __init__(self):
         super().__init__()
         self.setUI()
@@ -43,7 +43,9 @@ class Register(QWidget):
         self.btn_group = QButtonGroup()
         self.btn_group.addButton(self.radiobutton1)
         self.btn_group.addButton(self.radiobutton2)
-        self.loglbl = QLabel("Login")
+        self.loglbl = QLabel("<a href='login.py'>Login</a>")
+        self.loglbl.setOpenExternalLinks(False)
+        self.loglbl.linkActivated.connect(self.open_log)
         self.loglbl.setObjectName("loglbl")
 
         self.lbl.setAlignment(Qt.AlignHCenter)
@@ -112,10 +114,16 @@ class Register(QWidget):
 
         self.setLayout(f)
 
+    def open_log(self):
+        from login_page import LoginPage
+        self.login=LoginPage()
+        self.login.show()
+        self.close()
+
 
 if __name__ == "__main__":
     a = QApplication(sys.argv)
-    w = Register()
+    w = RegisterPage()
     w.show()
     sys.exit(a.exec_())
 

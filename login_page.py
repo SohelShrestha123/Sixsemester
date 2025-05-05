@@ -4,8 +4,7 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit,
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
 
-
-class Login(QWidget):
+class LoginPage(QWidget):
     def __init__(self):
         super().__init__()
         self.setUI()
@@ -31,7 +30,9 @@ class Login(QWidget):
         self.pass_input.setEchoMode(QLineEdit.Password)
         self.login_btn = QPushButton("Login")
         self.lbl3 = QLabel("Create an account?")
-        self.lbl4 = QLabel("Register")
+        self.lbl4 = QLabel("<a href='register_page.py'>Register</a>")
+        self.lbl4.setOpenExternalLinks(False)
+        self.lbl4.linkActivated.connect(self.open_reg)
         self.lbl3.setObjectName("lbl3")
         self.lbl4.setObjectName("lbl4")
         self.lbl.setObjectName("lbl")
@@ -103,13 +104,20 @@ class Login(QWidget):
         QLabel#i{
         margin:1px;
         }
+       
         """)
 
         self.setLayout(l)
 
+    def open_reg(self):
+        from register_page import  RegisterPage
+        self.register=RegisterPage()
+        self.register.show()
+        self.close()
+
 
 if __name__ == "__main__":
     a = QApplication(sys.argv)
-    w = Login()
+    w = LoginPage()
     w.show()
     sys.exit(a.exec_())
