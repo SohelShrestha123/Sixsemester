@@ -134,9 +134,6 @@ class Menu(QWidget):
        self.total=0
        self.lbl.setText("Total: Rs.0")
 
-
-
-
 if __name__=='__main__':
     a=QApplication(sys.argv)
     w=Menu()

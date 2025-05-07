@@ -20,12 +20,12 @@ CREATE TABLE IF NOT EXISTS orders (
 )
 ''')
 
-menu_items = [('Burger', 5.99),
+'''menu_items = [('Burger', 5.99),
     ('Pizza', 8.99),
     ('Pasta', 7.49),
     ('Fries', 2.99)
 ]
 
-cursor.executemany('INSERT INTO menu (name, price) VALUES (?, ?)', menu_items)
+cursor.executemany('INSERT INTO menu (name, price) VALUES (?, ?)', menu_items)'''
 conn.commit()
 conn.close()
