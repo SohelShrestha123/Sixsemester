@@ -1,5 +1,7 @@
+import sqlite3
 import sys
-from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit,
+
+from PyQt5.QtWidgets import (QApplication, QWidget, QLabel, QLineEdit,QMessageBox,
                              QPushButton, QVBoxLayout, QHBoxLayout, QFormLayout)
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import Qt
@@ -29,6 +31,7 @@ class LoginPage(QWidget):
         self.pass_input = QLineEdit(self)
         self.pass_input.setEchoMode(QLineEdit.Password)
         self.login_btn = QPushButton("Login")
+        self.login_btn.clicked.connect(self.login_acc)
         self.lbl3 = QLabel("Create an account?")
         self.lbl4 = QLabel("<a href='register_page.py'>Register</a>")
         self.lbl4.setOpenExternalLinks(False)
@@ -108,6 +111,29 @@ class LoginPage(QWidget):
         """)
 
         self.setLayout(l)
+
+    def login_acc(self):
+        username=self.user_input.text().strip()
+        password=self.pass_input.text().strip()
+
+        if not username or not password:
+           QMessageBox.warning(self, "Error", "Please enter both email and password.")
+           return
+
+        con=sqlite3.connect('menu.db')
+        cursor=con.cursor()
+        cursor.execute("SELECT * FROM user WHERE Username=? AND Confirmpassword=?",(username,password))
+        u=cursor.fetchone()
+        if u:
+            QMessageBox.information(self, "Success", "Logged in.")
+        else:
+            QMessageBox.critical(self, "Error", "Invalid email or password.")
+        con.close()
+
+        from App import Menu
+        self.w=Menu()
+        self.w.show()
+        self.close()
 
     def open_reg(self):
         from register_page import  RegisterPage

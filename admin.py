@@ -1,4 +1,5 @@
 import sys
+import traceback
 import sqlite3
 from PyQt5.QtWidgets import (QApplication,QWidget,QVBoxLayout,QHBoxLayout,
 QLineEdit,QPushButton,QListWidget,QMessageBox,QLabel)
@@ -6,7 +7,7 @@ from PyQt5.QtGui import QIcon,QPixmap
 from PyQt5.QtCore import Qt
 from PyQt5.sip import delete
 
-
+sys.excepthook = lambda exctype, value, tb: print("".join(traceback.format_exception(exctype, value, tb)))
 
 class AdminPanel(QWidget):
     def __init__(self):
@@ -95,13 +96,16 @@ class AdminPanel(QWidget):
 
 
     def load(self):
-        self.mList.clear()
-        con=sqlite3.connect('menu.db')
-        cursor=con.cursor()
-        cursor.execute("SELECT * FROM menu")
-        for r in cursor.fetchall():
+        try:
+         self.mList.clear()
+         con=sqlite3.connect('menu.db')
+         cursor=con.cursor()
+         cursor.execute("SELECT * FROM menu")
+         for r in cursor.fetchall():
             self.mList.addItem(f"{r[0]}. : {r[1]}..............................Rs.{r[2]:.2f}")
-        con.close()
+         con.close()
+        except Exception as e:
+            QMessageBox.critical(self,"Error",f"Failed to load menu:{e}")
 
     def add(self):
         n=self.name.text().strip()
@@ -112,62 +116,65 @@ class AdminPanel(QWidget):
             return
 
         try:
-            p=float(p)
+            p=int(p)
         except ValueError:
             QMessageBox.warning(self,"Notice","price should be number not in word")
             return
 
-        con=sqlite3.connect('menu.db')
-        cursor=con.cursor()
-        cursor.execute("INSERT INTO menu (Name,Price) VALUES (?,?)",(n,p))
-        con.commit()
-        con.close()
-
-        self.name.clear()
-        self.price.clear()
-        self.load()
+        try:
+         con=sqlite3.connect('menu.db')
+         cursor=con.cursor()
+         cursor.execute("INSERT INTO menu (Name,Price) VALUES (?,?)",(n,p))
+         con.commit()
+         con.close()
+         self.name.clear()
+         self.price.clear()
+         self.load()
+        except Exception as e:
+            QMessageBox.critical(self,"Error",f"Failed to load menu:{e}")
 
     def edit(self):
         i=self.mList.currentItem()
         if not i:
             QMessageBox.warning(self,"Notice","Select an item for edit.")
             return
-
-        i_id=int(i.text().split("-")[0])
-        n = self.name.text().strip()
-        p = self.price.text().strip()
-
-        if not n or not p:
-            QMessageBox.warning(self,"Notification","Data should not be empty.")
-            return
-
         try:
-            p=float(p)
+         i_id=int(i.text().split("-")[0])
+         n = self.name.text().strip()
+         p = self.price.text().strip()
+
+         if not n or not p:
+             QMessageBox.warning(self,"Notification","Data should not be empty.")
+             return
+
+         p=float(p)
+         con=sqlite3.connect('menu.db')
+         cursor=con.cursor()
+         cursor.execute("UPDATE menu SET Name=? ,Price=? WHERE Id=?",(n,p,i_id))
+         con.commit()
+         con.close()
+         self.load()
         except ValueError:
             QMessageBox.warning(self,"Notice","price should be number not in word")
-            return
-
-        con=sqlite3.connect('menu.db')
-        cursor=con.cursor()
-        cursor.execute("UPDATE menu SET Name=? ,Price=? WHERE Id=?",(n,p,i_id))
-        con.commit()
-        con.close()
-        self.load()
+        except Exception as e:
+            QMessageBox.critical(self, "Database Error", f"Failed to edit item: {e}")
 
     def delete(self):
         i = self.mList.currentItem()
         if not i:
             QMessageBox.warning(self, "Notice", "Select an item for delete.")
             return
+        try:
+         i_id=float(i.text().split("-")[0])
 
-        i_id=int(i.text().split("-")[0])
-
-        con=sqlite3.connect('menu.db')
-        cursor=con.cursor()
-        cursor.execute("DELETE FROM menu WHERE Id=?",(i_id,))
-        con.commit()
-        con.close()
-        self.load()
+         con=sqlite3.connect('menu.db')
+         cursor=con.cursor()
+         cursor.execute("DELETE FROM menu WHERE Id=?",(i_id,))
+         con.commit()
+         con.close()
+         self.load()
+        except Exception as e:
+            QMessageBox.critical(self, "Database Error", f"Failed to delete item: {e}")
 
 
 if __name__=="__main__":
