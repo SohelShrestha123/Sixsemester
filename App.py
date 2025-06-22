@@ -109,9 +109,9 @@ class Menu(QWidget):
            self.cart.append(food.text())
            self.good_list.addItem(food.text())
 
-           price=float(food.text().split("-Rs.")[1])
+           price=float(food.text().split("Rs.")[1])
            self.total+=price
-           self.lbl.setText("Total:Rs self.total")
+           self.lbl.setText(f"Total:Rs {self.total:.2f}")
 
    def orderPlace(self):
        if not self.cart:
@@ -122,8 +122,8 @@ class Menu(QWidget):
        cursor=conn.cursor()
 
        for i in self.cart:
-           food=i.split("-Rs.")[0]
-           p=float(i.split("-Rs.")[1])
+           food=i.split("Rs.")[0]
+           p=float(i.split("Rs.")[1])
            cursor.execute("INSERT INTO orders(Foodname,Quantity,TotalPrice)VALUES(?,?,?)",(food,1,p))
 
 

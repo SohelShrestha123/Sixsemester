@@ -4,10 +4,6 @@ import sqlite3
 from PyQt5.QtWidgets import (QApplication,QWidget,QVBoxLayout,QHBoxLayout,
 QLineEdit,QPushButton,QListWidget,QMessageBox,QLabel)
 from PyQt5.QtGui import QIcon,QPixmap
-from PyQt5.QtCore import Qt
-from PyQt5.sip import delete
-
-sys.excepthook = lambda exctype, value, tb: print("".join(traceback.format_exception(exctype, value, tb)))
 
 class AdminPanel(QWidget):
     def __init__(self):
@@ -139,14 +135,12 @@ class AdminPanel(QWidget):
             QMessageBox.warning(self,"Notice","Select an item for edit.")
             return
         try:
-         i_id=int(i.text().split("-")[0])
+         i_id=int(i.text().split(".")[0])
          n = self.name.text().strip()
          p = self.price.text().strip()
-
          if not n or not p:
              QMessageBox.warning(self,"Notification","Data should not be empty.")
              return
-
          p=float(p)
          con=sqlite3.connect('menu.db')
          cursor=con.cursor()
@@ -154,6 +148,7 @@ class AdminPanel(QWidget):
          con.commit()
          con.close()
          self.load()
+
         except ValueError:
             QMessageBox.warning(self,"Notice","price should be number not in word")
         except Exception as e:
@@ -165,7 +160,7 @@ class AdminPanel(QWidget):
             QMessageBox.warning(self, "Notice", "Select an item for delete.")
             return
         try:
-         i_id=float(i.text().split("-")[0])
+         i_id=int(i.text().split(".")[0])
 
          con=sqlite3.connect('menu.db')
          cursor=con.cursor()
